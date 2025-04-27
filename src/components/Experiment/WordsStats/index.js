@@ -5,7 +5,7 @@ import { makeStyles } from '@mui/styles';
 import { DividerBox } from 'rc-dock';
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
-import BooksInput from './BooksInput';
+import { BooksInput } from '../../BooksInput';
 import { getBookName, getWordsBySample, getWordsDetails, getWordsHash } from '../../../bibles/CUV';
 import WordButton from './WordButton';
 

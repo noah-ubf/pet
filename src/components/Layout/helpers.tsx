@@ -1,9 +1,11 @@
 import Library from '../Library';
 import WordsStats from '../Experiment/WordsStats';
-import ScriptureList from '../Experiment/ScriptureList';
+import Search from '../Search';
 import Chapter from '../Chapter';
 import { TScripture, TViews } from '../../types';
-import bookNames from '../../bibles/CUV/names.json';
+import { getBookNames } from '../../bibles/CUV';
+
+const bookNames = getBookNames();
 
 export const removeProperty = (dyProp: string) => ({ [dyProp]: _, ...rest }: any) => rest;
 
@@ -45,12 +47,12 @@ export const parseScripture = (scripture: string): TScripture => {
   const parts = scripture?.split?.('-');
   const [book, chapter, verse1] = parts[0].split(/[.:]/);
   const verses = [verse1];
+
   if (parts[1]) {
     const [book2, chapter2, verse2] = parts[1].split('.');
     verses.push(verse2)
-    console.log('***', {parts, book, chapter, verse1, book2, chapter2, verse2})
   }
-  else console.log('***', {parts, book, chapter, verse1})
+
   return { book, chapter, verses };
 };
 
@@ -87,8 +89,8 @@ export const viewFabric = (id, dockRef, handleRef, data: any = {}) => {
   } else if (id === 'experiment') {
     return {
       id,
-      title: 'Experiment',
-      content: <ScriptureList onShow={(scripture) => {
+      title: 'Search',
+      content: <Search onShow={(scripture) => {
         handleRef.current.show(parseScripture(scripture), { newTab: true });
       }
       }/>,

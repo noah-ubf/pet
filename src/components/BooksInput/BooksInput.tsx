@@ -1,15 +1,14 @@
-import { useCallback, useRef, useState } from 'react';
-import { makeStyles } from '@mui/styles';
+import { useState } from 'react';
+// import { makeStyles } from '@mui/styles';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import levenshtein from '../../../utils/levenshtein';
-import bibleData from '../../../bibles/CUV/bible.json';
-import bookNames from '../../../bibles/CUV/names.json';
+import levenshtein from '../../utils/levenshtein';
+import bookNames from '../../bibles/CUV/names.json';
 
-const useStyles = makeStyles((theme) => ({
+// const useStyles = makeStyles((theme) => ({
 
-}));
+// }));
 
 const bibleOptions = Object.keys(bookNames).map((key) => ({
 	key,
@@ -18,8 +17,7 @@ const bibleOptions = Object.keys(bookNames).map((key) => ({
 }));
 
 const BooksInput = ({ onChange }) => {
-	const classes = useStyles();
-  const [sample, setSample] = useState('');
+	// const classes = useStyles();
 	const [value, setValue] = useState([]);
 	const filterBooks = (options, sample) => {
 		const nums = options
@@ -62,7 +60,7 @@ const BooksInput = ({ onChange }) => {
 	      filterOptions={(options, {inputValue}) => {
 	      	return filterBooks(options, inputValue.toLowerCase());
 	      }}
-	      style={{ width: 400 }}
+	      style={{ width: '100%' }}
 	      size={'small'}
 	      renderInput={(params) => (
 	        <TextField {...params} placeholder="" />

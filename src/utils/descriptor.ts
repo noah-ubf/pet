@@ -1,4 +1,4 @@
-const descrRE = /^(\(([^)]+)\))?(([^.]+)\.)?(\d+)?(:(\d+)(-(\d+))?)?$/;
+const descrRE = /^(\(([^)]+)\))?(([^.]+)\.)?\s*(\d+)?\s*(:\s*(\d+)\s*(-\s*(\d+))?)?\s*$/;
 
 const DEFAULT_MODULE = 'CUV';
 
@@ -19,9 +19,9 @@ export const parseDescriptor = (descr: string) => {
     const verses = v1 === undefined ? null : (v2 === undefined ? [+v1] : [+v1, +v2]);
     if (!moduleDescr || !bookDescr || !chapterDescr || !verses) return null;
     return {
-      module: moduleDescr,
-      book: bookDescr,
-      chapter: chapterDescr,
+      module: moduleDescr.trim(),
+      book: bookDescr.trim(),
+      chapter: chapterDescr.trim(),
       verses,
     };
   }).filter((item) => !!item);

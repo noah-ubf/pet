@@ -65,17 +65,16 @@ const Library = ({ dockRef, onShow, onDragChapter }) => {
 	const classes = useStyles();
 	const [book, setBook] = useState(defaultBook);
 	const [bookData, setBookData] = useState(defaultBookData);
-	const [chapter, setChapter] = useState(1);
+	// const [chapter, setChapter] = useState(1);
 
 	const handleSelectBook = useCallback((newBook) => {
 		setBook(newBook);
-		setChapter(1);
+		// setChapter(1);
 		setBookData(bibleData.books.find((b) => b.book === newBook));
 	}, []);
 
 	const handleSelectChapter = useCallback((e, newChapter) => {
-		console.log('HERE!!!');
-		setChapter(newChapter);
+		// setChapter(newChapter);
 		onShow?.(book, newChapter, null, { newTab: e.shiftKey || e.ctrlKey || e.altKey });
 	}, [ onShow, book ]);
 

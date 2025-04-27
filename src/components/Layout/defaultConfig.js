@@ -6,7 +6,7 @@ const defaultConfig = {
         tabs: [
           {id: 'library', title: 'Library'},
           {id: 'words_stats', title: 'Stats'},
-          {id: 'experiment', title: 'Experiment'},
+          {id: 'experiment', title: 'Search'},
         ]
       },
       {

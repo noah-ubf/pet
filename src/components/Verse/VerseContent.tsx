@@ -2,11 +2,16 @@ import { makeStyles } from '@mui/styles';
 import Fragment from './Fragment';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  VerseContent: {
     fontSize: '1rem',
   },
   content: {
-
+		'& .highlighted': {
+			background: 'yellow',
+		},
+		'& .highlighted:hover': {
+			background: 'orange',
+		},
   },
   verseNumber: {
   	display: 'inline-block',
@@ -18,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 const VerseContent = ({ data, onShow }) => {
 	const classes = useStyles();
-	return <div className={classes.root}>
+	return <div className={classes.VerseContent}>
 		<div className={classes.content}>
 			{!!data.verse && <span className={classes.verseNumber}>{data.verse}</span>}
 			{!!data.verse && ' '}

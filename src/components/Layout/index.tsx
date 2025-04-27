@@ -41,7 +41,7 @@ const MyLayout = () => {
   }, [dockRef, handleRef]);
   const [views, setViews] = useState<TViews>(defaultViews);
   const [layout, setLayout] = useState<LayoutBase>(defaultConfig as LayoutBase);
-  const [pinnedId, setPinnedId] = useState<string | null>(null);
+  // const [pinnedId, setPinnedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loaded) {
@@ -60,7 +60,7 @@ const MyLayout = () => {
       window.localStorage.setItem('views', prepareViewsToSave(views));
       // console.log('Layout updated', layout);
     }
-  }, [loaded, layout, setLayout, setLoaded, setViews]);
+  }, [loaded, layout, setLayout, setLoaded, setViews, views]);
 
   useEffect(() => {
     const newTab = viewFabric('default', dockRef, handleRef, views.default.data);
@@ -82,10 +82,6 @@ const MyLayout = () => {
     }
 
     if (!views[id]) {
-      setViews({
-        ...views,
-        [id]: viewFabric(id, dockRef, handleRef, { book, chapter }),
-      })
       const newTab = { id };
       const newChildren = layout.dockbox.children.length < 2
         ? [ ...layout.dockbox.children, {
@@ -106,8 +102,13 @@ const MyLayout = () => {
         }
       };
       setLayout(newLayout);
+      setViews({
+        ...views,
+        [id]: viewFabric(id, dockRef, handleRef, { book, chapter }),
+      })
     } else {
       console.log('TAB EXISTS!!!', id);
+
       const newLayout = activateTab(layout, id);
       setLayout(newLayout);
     }
@@ -160,16 +161,6 @@ const MyLayout = () => {
     handleRef.current = { show: handleShow, drag: handleDragChapter };
   }, [handleShow, handleDragChapter]);
 
-  const loadTab = useCallback((data): TView => {
-    if (!views[data.id]) console.log(`NEMA ${data.id}`)
-    return {
-      ...data,
-      title: renderTitle(data),
-      content: views[data.id]?.content || 'Empty',
-      closable: views[data.id]?.closable,
-    };
-  }, [views]);
-
   const renderTitle = useCallback((data) => {
     return (
       <div
@@ -179,7 +170,17 @@ const MyLayout = () => {
         { views[data.id]?.title ?? data.id }
       </div>
     );
-  }, [views]);
+  }, [views, classes.defaultTitle]);
+
+  const loadTab = useCallback((data): TView => {
+    if (!views[data.id]) console.log(`NEMA ${data.id}`)
+    return {
+      ...data,
+      title: renderTitle(data),
+      content: views[data.id]?.content || 'Empty',
+      closable: views[data.id]?.closable,
+    };
+  }, [views, renderTitle]);
 
   const onLayoutChange = useCallback((newLayout, currentTabId, direction) => {
     console.log(currentTabId, layout, newLayout, direction);

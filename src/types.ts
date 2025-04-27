@@ -33,15 +33,18 @@ export type TFragment = {
 };
 
 export type TVerse = {
+    descriptor: string
     book: string
     chapter: string
-    verse: number
+    verse: number | null
     heading?: string
     parallel?: TRef[]
     fragments: TFragment[]
+    error?: boolean
 };
 
 export type TChapter = {
+    descriptor: string
     chapter: string
     verses: TVerse[]
 };

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { DragDropDiv } from 'rc-dock';
 import { makeStyles } from '@mui/styles';
-import { getId } from '../Layout/helpers';
+// import { getId } from '../Layout/helpers';
 
 const useStyles = makeStyles((theme) => ({
   root: {

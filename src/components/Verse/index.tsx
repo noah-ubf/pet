@@ -5,11 +5,16 @@ import Fragment from './Fragment';
 import VerseContent from './VerseContent';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  Verse: {
     fontSize: '1rem',
   },
   content: {
-
+		'& .highlighted': {
+			background: 'yellow',
+		},
+		'& .highlighted:hover': {
+			background: 'orange',
+		},
   },
   verseNumber: {
   	display: 'inline-block',
@@ -23,14 +28,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Verse = ({ name, data, onShow }) => {
-	console.log({data})
+const Verse = ({ name, data, highlights, onShow }) => {
 	const classes = useStyles();
 	const elId = `V_${name?.replace?.(/[:().]/g, '_') ?? ''}_${data.verse}`;
 	if (data.error) return (
 		<div className={classes.error}>{data.text}</div>
 	);
-	return <div className={classes.root} id={elId}>
+	return <div className={classes.Verse} id={elId}>
 		<div className={classes.content}>
 			{!!data.verse && <span className={classes.verseNumber}>{data.verse}</span>}
 			{!!data.parallel &&
@@ -40,7 +44,9 @@ const Verse = ({ name, data, onShow }) => {
 			}
 			{!!data.verse && ' '}
 			{
-				data.fragments.map((fragment, i) => <Fragment key={i} onShow={onShow} data={fragment} />)
+				data.fragments.map((fragment, i) => (
+					<Fragment key={i} onShow={onShow} data={fragment} highlights={highlights} />
+				))
 			}
 		</div>
 	</div>
