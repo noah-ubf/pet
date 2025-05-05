@@ -27,6 +27,7 @@ const wordsHash: TWordsHash = wordsHashRaw as TWordsHash;
 const wordsSorted: string[] = wordsSortedRaw;
 
 export function getBookName(shortName: string): string {
+	if (!bookNames.names.includes(shortName)) return '';
 	return bookNames[shortName]?.[0];
 }
 
@@ -36,9 +37,39 @@ export function getBookNames(): TBookNames {
 
 export function getChapter(book, chapter): TChapter {
 	const bookData = bibleData.books.find((item) => book === item.book);
-	const chapterData = bookData.chapters.find((item) => chapter === item.chapter);
+	const chapterData = bookData.chapters.find((item) => `${chapter}` === item.chapter);
 	return chapterData;
 }
+
+export function getPrevChapter(data) {
+  if (!data.book) return null;
+  if (+data.chapter > 1) {
+    return { ...data, chapter: `${+data.chapter - 1}`};
+  }
+	const bookIndex = bookNames.names.indexOf(data.book);
+	if (bookIndex > 0) {
+		const newBook = bookNames.names[bookIndex - 1]
+		const bookData = bibleData.books.find((item) => item.book === newBook);
+		const chapter = bookData.chapters.length;
+		return { book: newBook, chapter };
+	}
+	return null;
+};
+
+export function getNextChapter(data) {
+  if (!data.book) return null;
+	const bookData = bibleData.books.find((item) => item.book === data.book);
+	if (data.chapter < bookData.chapters.length) {
+		return { ...data, chapter: `${+data.chapter + 1}`};
+	}
+	const bookIndex = bookNames.names.indexOf(data.book);
+	if (bookIndex < bookNames.names.length - 1) {
+		const newBook = bookNames.names[bookIndex + 1]
+		return { book: newBook, chapter: "1" };
+	}
+	return null;
+};
+
 
 export function getVersesByScripture(scriptureList: string[]): TVerse[] {
 	return scriptureList.map((scripture) => {

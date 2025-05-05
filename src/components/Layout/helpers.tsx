@@ -4,6 +4,7 @@ import Search from '../Search';
 import Chapter from '../Chapter';
 import { TScripture, TViews } from '../../types';
 import { getBookNames } from '../../bibles/CUV';
+import TaggedList from '../Experiment/TaggedList';
 
 const bookNames = getBookNames();
 
@@ -49,17 +50,23 @@ export const parseScripture = (scripture: string): TScripture => {
   const verses = [verse1];
 
   if (parts[1]) {
-    const [book2, chapter2, verse2] = parts[1].split('.');
-    verses.push(verse2)
+    if (/^\d+$/.exec(parts[1])) {
+      verses.push(parts[1]);
+    } else {
+      const [book2, chapter2, verse2] = parts[1].split('.');
+      verses.push(verse2);
+    }
   }
 
   return { book, chapter, verses };
 };
 
-export const parseHref = (href: string): TScripture => {
-  const parts1 = href.split('/CUV/')[1].split('/')[0];
+export const parseHref = (href: string | TScripture): TScripture => {
+  console.log({href})
+  if (typeof href === 'object') return href;
+  const parts1 = href.split('/CUV/')[1]?.split?.('/')?.[0];
   const parts2 = href.split('?hl=')[1];
-  return parseScripture(parts2 ?? parts1);
+  return parseScripture(parts2 ?? parts1 ?? href);
 };
 
 export const getId = ({ book, chapter }) => `(CUV)${book}.${chapter}`
@@ -96,6 +103,13 @@ export const viewFabric = (id, dockRef, handleRef, data: any = {}) => {
       }/>,
       closable: false
     };
+  } else if (id === 'tagged_list') {
+    return {
+      id,
+      title: 'Tagged List',
+      content: <TaggedList />,
+      closable: false
+    };
   } else if (id === 'default') {
     return {
       id,
@@ -105,7 +119,7 @@ export const viewFabric = (id, dockRef, handleRef, data: any = {}) => {
         <Chapter
           name={data.book ? `(CUV)${data.book}.${data.chapter}` : ''}
           data={data}
-          onShow={(href) => handleRef.current.show(parseHref(href), { newTab: true })}
+          onShow={(href, options={}) => handleRef.current.show(parseHref(href), { newTab: true, ...options })}
         />
       ),
       closable: false,

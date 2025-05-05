@@ -56,6 +56,12 @@ const Search = ({ onShow }) => {
 		<div>
 			<TextField fullWidth onChange={handleFilter}	/>
 		</div>
+		{
+			search.trim().length >= 3 &&
+			<div className={classes.heading}>
+				{verses.length} results for <strong>{search}</strong>
+			</div>
+		}
 		<div className={classes.content}>
 			<ScriptureList
 				verses={verses}

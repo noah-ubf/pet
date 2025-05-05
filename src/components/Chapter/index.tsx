@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
-import { getChapter } from '../../bibles/CUV';
+import { getChapter, getPrevChapter, getNextChapter } from '../../bibles/CUV';
 import ScriptureList from '../ScriptureList';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, ButtonGroup, Stack, TextField } from '@mui/material';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,30 +26,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 const Chapter = ({ name, data, onShow }) => {
   const [search, setSearch] = useState('');
 	const classes = useStyles();
 	if (!data.book) return (<div className={classes.root}></div>);
+  console.log({data})
 	const chapterData = getChapter(data.book, data.chapter)
-  const prev = data.chapter - 1;
-  const next = data.chapter + 1;
-  const prevChapter = prev > 0 ? `${data.book}.${prev}` : null;
-  const nextChapter = next > `${data.book}.${next}`;
+  const prevChapter = getPrevChapter(data);
+  const nextChapter = getNextChapter(data);
   const handlePrev = () => {
-    onShow(prevChapter);
+    onShow(prevChapter, {newTab: false});
   };
   const handleNext = () => {
-    onShow(nextChapter);
+    onShow(nextChapter, {newTab: false});
   };
 	return <div className={classes.root}>
 		<Stack spacing={2} direction="row" className={classes.header}>
-      {/* <Button onClick={handlePrev} disabled={!prevChapter}><ArrowLeft/></Button>
-      <Button onClick={handleNext} disabled={!nextChapter}><ArrowRight/></Button> */}
+      <ButtonGroup variant="contained" aria-label="Basic button group">
+        <Button variant="outlined" onClick={handlePrev} disabled={!prevChapter}><ArrowLeft/></Button>
+        <Button variant="outlined" onClick={handleNext} disabled={!nextChapter}><ArrowRight/></Button>
+      </ButtonGroup>
       <TextField
         fullWidth
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search..."
         value={search}
+        size="small"
       />
 		</Stack>
 		<div className={classes.content}>

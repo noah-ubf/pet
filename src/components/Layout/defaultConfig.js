@@ -7,6 +7,7 @@ const defaultConfig = {
           {id: 'library', title: 'Library'},
           {id: 'words_stats', title: 'Stats'},
           {id: 'experiment', title: 'Search'},
+          {id: 'tagged_list', title: 'Tagged List'},
         ]
       },
       {

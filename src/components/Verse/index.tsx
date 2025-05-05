@@ -28,9 +28,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Verse = ({ name, data, highlights, onShow }) => {
+const Verse = ({ name, data, highlights=undefined, onShow }) => {
 	const classes = useStyles();
-	const elId = `V_${name?.replace?.(/[:().]/g, '_') ?? ''}_${data.verse}`;
+	const elId = `V_CUV_${data.descriptor?.replace?.(/[:().]/g, '_') ?? ''}}`;
 	if (data.error) return (
 		<div className={classes.error}>{data.text}</div>
 	);

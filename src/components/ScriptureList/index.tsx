@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { makeStyles } from '@mui/styles';
 import Verse from '../Verse';
 import { TVerse } from '../../types';
+import { getBookName } from '../../bibles/CUV';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,7 +60,7 @@ const ScriptureList = ({ filters, highlights, onShow, verses, showHeaders, showC
 	const renderChapter = (verse) => {
 		if (!showChapter) return null;
 		if (book===verse.book && chapter===verse.chapter) return null;
-		book = verse.book;
+		book = getBookName(verse.book);
 		chapter = verse.chapter;
 		if (!book || !chapter) return null;
 		return <div className={classes.heading}>{book}.{chapter}</div>;

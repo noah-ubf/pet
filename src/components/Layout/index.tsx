@@ -37,7 +37,7 @@ const MyLayout = () => {
       words_stats: viewFabric('words_stats', dockRef, handleRef),
       experiment: viewFabric('experiment', dockRef, handleRef),
       default: viewFabric('default', dockRef, handleRef),
-    };
+      tagged_list: viewFabric('tagged_list', dockRef, handleRef),};
   }, [dockRef, handleRef]);
   const [views, setViews] = useState<TViews>(defaultViews);
   const [layout, setLayout] = useState<LayoutBase>(defaultConfig as LayoutBase);
@@ -120,7 +120,7 @@ const MyLayout = () => {
         const vEnd = +verses[verses.length - 1];
         for (let verseNum  = vStart; verseNum <= vEnd; verseNum++) {
           try{
-            const vId = `#V_${chId}_${verseNum}`;
+            const vId = `#V${chId}_${verseNum}`;
             const verseEl = document.querySelector(vId);
             if (verseEl) verseEls.push(verseEl);
           } catch(e) {}

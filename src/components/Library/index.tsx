@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { makeStyles } from '@mui/styles';
+import { getBookName } from '../../bibles/CUV';
 import bibleDataRaw from '../../bibles/CUV/bible.json';
 import bookNamesRaw from '../../bibles/CUV/names.json';
 import { TBibleData } from '../../types';
@@ -89,7 +90,7 @@ const Library = ({ dockRef, onShow, onDragChapter }) => {
 							className={classes.book}
 							onClick={() => handleSelectBook(item)}
 						>
-							{ bookNames[item][0] }
+							{ getBookName(item) }
 						</div>
 						{
 							item === book ? (
