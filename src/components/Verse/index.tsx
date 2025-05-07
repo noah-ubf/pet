@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Verse = ({ name, data, highlights=undefined, onShow }) => {
 	const classes = useStyles();
-	const elId = `V_CUV_${data.descriptor?.replace?.(/[:().]/g, '_') ?? ''}}`;
+	const elId = `V_CUV_${data.descriptor?.replace?.(/[:().]/g, '_') ?? ''}`;
 	if (data.error) return (
 		<div className={classes.error}>{data.text}</div>
 	);
