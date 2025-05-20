@@ -7,13 +7,15 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   	cursor: 'pointer',
   	width: 140,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
   },
 }));
 
 const WordButton = ({title, occurences, filteredOccurences, onClick}) => {
 	const classes = useStyles();
 	return (
-		<button className={classes.word} onClick={() => onClick?.(title)}>
+		<button className={classes.word} onClick={() => onClick?.(title)} title={title}>
 			<strong>{title}</strong>
 			<div>
 			{

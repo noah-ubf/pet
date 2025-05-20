@@ -68,6 +68,7 @@ const Search = ({ onShow }) => {
 				highlights={searchParts}
 				onShow={onShow}
 				showChapter={true}
+				chapterLink={true}
 			/>
 		</div>
 	</div>

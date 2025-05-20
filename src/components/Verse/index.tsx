@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Verse = ({ name, data, highlights=undefined, onShow }) => {
+const Verse = ({ name, data, highlights=undefined, highlightWholeWords=false, onShow }) => {
 	const classes = useStyles();
 	const elId = `V_CUV_${data.descriptor?.replace?.(/[:().]/g, '_') ?? ''}`;
 	if (data.error) return (
@@ -45,7 +45,13 @@ const Verse = ({ name, data, highlights=undefined, onShow }) => {
 			{!!data.verse && ' '}
 			{
 				data.fragments.map((fragment, i) => (
-					<Fragment key={i} onShow={onShow} data={fragment} highlights={highlights} />
+					<Fragment
+						key={i}
+						onShow={onShow}
+						data={fragment}
+						highlights={highlights}
+						highlightWholeWords={highlightWholeWords}
+					/>
 				))
 			}
 		</div>

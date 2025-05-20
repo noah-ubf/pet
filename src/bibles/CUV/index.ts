@@ -26,6 +26,10 @@ const bookNames: TBookNames = bookNamesRaw;
 const wordsHash: TWordsHash = wordsHashRaw as TWordsHash;
 const wordsSorted: string[] = wordsSortedRaw;
 
+export const booksIndexed = bookNames.names.reduce((acc, item, index) => {
+	return { ...acc, [item]: index };
+}, {});
+
 export function getBookName(shortName: string): string {
 	if (!bookNames.names.includes(shortName)) return '';
 	return bookNames[shortName]?.[0];
@@ -33,6 +37,10 @@ export function getBookName(shortName: string): string {
 
 export function getBookNames(): TBookNames {
 	return bookNames;
+}
+
+export function getBookChapterCount(shortName: string): number {
+	return bibleData.books.find((item) => item.book === shortName)?.chapters?.length ?? 0;
 }
 
 export function getChapter(book, chapter): TChapter {
@@ -70,6 +78,19 @@ export function getNextChapter(data) {
 	return null;
 };
 
+export function orderScriptures(a, b) {
+	const parsedA = parseScripture(a);
+	const parsedB = parseScripture(b);
+	const aBookIndex = booksIndexed[parsedA.book];
+	const bBookIndex = booksIndexed[parsedB.book];
+	if (aBookIndex === bBookIndex) {
+		if (parsedA.chapter === parsedB.chapter) {
+			return (+parsedA.verses[0]) - (+parsedB.verses[0]);
+		}
+		return (+parsedA.chapter) - (+parsedB.chapter);
+	}
+	return aBookIndex - bBookIndex;
+}
 
 export function getVersesByScripture(scriptureList: string[]): TVerse[] {
 	return scriptureList.map((scripture) => {
@@ -95,6 +116,17 @@ const getVerseError = (text) => ({
     verse: null,
 });
 
+export function getVerse(scripture: string): TVerse {
+	const parsed = parseScripture(scripture);
+	const {book, chapter} = parsed;
+	const verse = parsed.verses[0]
+	const bookData = bibleData.books.find((item) => book === item.book);
+	if (!bookData) return getVerseError(`Cannot find ${book}.${chapter}:${verse}`)
+	const chapterData = bookData.chapters.find((item) => chapter === item.chapter);
+	const verseData = chapterData.verses.find((v) => v.verse  === +verse);
+	return verseData;
+}
+
 export function getVerses(book, chapter, verses): TVerse[] {
 	const bookData = bibleData.books.find((item) => book === item.book);
 	if (!bookData) return [getVerseError(`Cannot find ${book}.${chapter}:${verses.join('-')}`)]
@@ -105,21 +137,50 @@ export function getVerses(book, chapter, verses): TVerse[] {
 	return verseList;
 }
 
-const occurencesWithBooknames = (books) => (scripture) => {
+const occurencesWithBooknames = (books, chapters=[]) => (scripture) => {
 	if (books.length === 0) return true;
-	const bookName = scripture.split('.')[0];
-	return books.includes(bookName);
+	const parsed = parseScripture(scripture);
+	const bookName = parsed.book;
+	return books.includes(bookName) && (
+		books.length !== 1 ||
+		chapters.length !== 2 ||
+		(chapters[0]<=parsed.chapter && chapters[1]>=parsed.chapter)
+	);
+}
+
+const occurencesInBook = (book, chapters) => (scripture) => {
+	const parsed = parseScripture(scripture);
+	const bookName = parsed.book;
+	return bookName === book &&
+	(chapters.length === 0 || (chapters[0]<=parsed.chapter && chapters[1]>=parsed.chapter));
+}
+
+const occurencesWithinFragment = (fragment) => {
+	const fragmentData = parseScripture(fragment);
+	console.log('[1]', {fragmentData})
+	return (scripture) => {
+		if (fragment === '') return true;
+		const scriptureData = parseScripture(scripture);
+		console.log('[1]', {scriptureData})
+		return scriptureData.book === fragmentData.book
+				&& scriptureData.chapter === fragmentData.chapter
+				&& scriptureData.verses[0] >= fragmentData.verses[0]
+				&& scriptureData.verses[0] <= fragmentData.verses[1];
+	};
 }
 
 export function getWordsHash() {
 	return wordsHash;
 }
 
-export function getWordsBySample(sample, books = []) {
+export function getWordsBySample(sample, books = [], chapters = []) {
 	return wordsSorted
 		.filter((w) => w.replace('’', "'").indexOf(sample) !== -1)
 		.filter((w) => {
-			if (sample === '' || books.length === 0) return true;
+			//if (sample === '' || books.length === 0) return true;
+			if (books.length === 1 && chapters.length > 0) {
+				return wordsHash[w].occurences.some(occurencesInBook(books[0], chapters));
+			}
 			return wordsHash[w].occurences.some(occurencesWithBooknames(books));
 		})
 }
@@ -136,11 +197,11 @@ export function getClosestWord(word: string): string {
 	return word;
 }
 
-export function getWordsDetails(words: string[], books: string[]): Record<string, { occurences: string[] }> {
+export function getWordsDetails(words: string[], books: string[], chapters: number[] = []): Record<string, { occurences: string[] }> {
 	const details = {};
 	words.forEach((w) => {
 		const occurences = wordsHash[w]?.occurences ?? [];
-		details[w] = { occurences: occurences.filter(occurencesWithBooknames(books)) };
+		details[w] = { occurences: occurences.filter(occurencesWithBooknames(books, chapters)) };
 	});
 	return details;
 }
@@ -174,7 +235,7 @@ export function searchVerses(searchParts: string[], books: string[]): [string[],
 			.reduce((acc: Set<string> | null, item: Set<string>) =>
 				acc === null ? item : intersection(acc, item), null) ?? [];
 
-		const scriptures: string[] = Array.from(ret);
+		const scriptures: string[] = Array.from(ret).sort(orderScriptures);
 
 		return [scriptures, getVersesByScripture(scriptures)];
 	}

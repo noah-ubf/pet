@@ -37,6 +37,7 @@ type TScriptureListProps = {
 	highlights?: string[]
 	showHeaders?: boolean
 	showChapter?: boolean
+	chapterLink?: boolean
 };
 
 const filterVerses = (verses, filters) => {
@@ -47,7 +48,15 @@ const filterVerses = (verses, filters) => {
 	});
 }
 
-const ScriptureList = ({ filters, highlights, onShow, verses, showHeaders, showChapter }: TScriptureListProps) => {
+const ScriptureList = ({
+	filters,
+	highlights,
+	onShow,
+	verses,
+	showHeaders,
+	showChapter,
+	chapterLink,
+}: TScriptureListProps) => {
 	const classes = useStyles();
 
 	const versesToShow = useMemo(() => filterVerses(verses, filters), [verses, filters]);
@@ -59,10 +68,17 @@ const ScriptureList = ({ filters, highlights, onShow, verses, showHeaders, showC
 
 	const renderChapter = (verse) => {
 		if (!showChapter) return null;
-		if (book===verse.book && chapter===verse.chapter) return null;
-		book = getBookName(verse.book);
+		const verseBookName = getBookName(verse.book);
+		if (book===verseBookName && chapter===verse.chapter) return null;
+		book = verseBookName;
 		chapter = verse.chapter;
 		if (!book || !chapter) return null;
+		const handler = (book, chapter) => () => onShow(`${book}.${chapter}`);
+		if (chapterLink) {
+			return <button className={classes.heading} onClick={handler(book, chapter)}>
+				{book}.{chapter}
+			</button>;
+		}
 		return <div className={classes.heading}>{book}.{chapter}</div>;
 	}
 

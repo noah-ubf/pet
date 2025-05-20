@@ -45,6 +45,9 @@ export const insertTab = (node, tab) => {
 };
 
 export const parseScripture = (scripture: string): TScripture => {
+  if (scripture.indexOf('?hl=') !== -1) {
+    scripture = scripture.split('?hl=')[1];
+  }
   const parts = scripture?.split?.('-');
   const [book, chapter, verse1] = parts[0].split(/[.:]/);
   const verses = [verse1];
@@ -69,7 +72,18 @@ export const parseHref = (href: string | TScripture): TScripture => {
   return parseScripture(parts2 ?? parts1 ?? href);
 };
 
-export const getId = ({ book, chapter }) => `(CUV)${book}.${chapter}`
+export const getBookAbbr = (book: string) => {
+  if (bookNames.names.includes(book)) {
+    return book;
+  }
+  const bookName = Object.keys(bookNames).find((key) => bookNames[key].includes(book));
+  return bookName;
+}
+
+export const getId = ({ book, chapter }) => {
+  const bookName = getBookAbbr(book);
+  return `_CUV_${bookName}_${chapter}`
+};
 
 export const viewFabric = (id, dockRef, handleRef, data: any = {}) => {
   if (id === 'library') {

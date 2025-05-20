@@ -24,10 +24,11 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
 	data: any,
 	highlights?: string[],
+	highlightWholeWords?: boolean,
   onShow: (string) => {},
 };
 
-const Fragment: ComponentType<Props> = ({data, highlights, onShow}: Props) => {
+const Fragment: ComponentType<Props> = ({data, highlights, highlightWholeWords=false, onShow}: Props) => {
 	const classes = useStyles();
 	const textClasses = classname({
 		[classes.italic]: data.italic || data.inserted,
@@ -46,7 +47,13 @@ const Fragment: ComponentType<Props> = ({data, highlights, onShow}: Props) => {
 	if (data.text) {
 		return (
 			<span className={textClasses}>
-				{highlights ? <HighlightedText text={data.text} highlights={highlights}/> : data.text}
+				{highlights
+					? <HighlightedText
+							text={data.text}
+							highlights={highlights}
+							highlightWholeWords={highlightWholeWords}
+						/>
+					: data.text}
 			</span>
 		);
 	}
